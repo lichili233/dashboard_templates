@@ -4,6 +4,10 @@ This repo contains multiple code templates for (simplified versions of) the mock
 
 Not from production, not for production.
 
+# Available Templates
+
+- Grid viewer for labled images: `dashboards/image_label_grid`
+
 # License
 
 [Apache License 2.0](https://github.com/lichili233/dashboard_templates/blob/main/LICENSE)
