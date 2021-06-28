@@ -66,13 +66,29 @@ def main():
         body="<h1 style='text-align: center; color: red;'>Computer Vision Image-Label Data Previewer</h1>", 
         unsafe_allow_html=True)
     sample_per_label = st.slider(
-        label="Sample size per label",
+        label='Sample size per label',
         min_value=10,
         max_value=200,
-        step=10)
+        step=10,
+        help='Fixes the amount of sample showing for each ImageNet label.')
+    width_per_image = st.slider(
+        label='Width per image',
+        min_value=64,
+        max_value=512,
+        step=16,
+        help='Resizes the images to this width for display.')
+    version_choice = st.radio(
+        label='Select a dataset',
+        options=['full','tiny'],
+        help='The version of ImageNet to be chosen for display.')
+    shuffle_choice = st.radio(
+        label='Shuffle images per label',
+        options=['True','False'],
+        help='Randomly shuffle the images per label for display.')
     df, df_label_id_name = load_imagenet(
-        version='full', 
-        sample_per_label=sample_per_label)
+        version=version_choice, 
+        sample_per_label=sample_per_label,
+        shuffle=eval(shuffle_choice))
     images_on_page, labels_on_page = paginator_by_label(
         title='Select a label',
         df_items_labels=df,
@@ -83,7 +99,7 @@ def main():
         label_name_col='label_name')
     st.image(
         image=images_on_page,
-        width=224,
+        width=width_per_image,
         caption=labels_on_page)
 
 
