@@ -17,12 +17,14 @@
 import os
 import glob
 import pandas as pd
+import numpy as np
 from typing import Tuple, List
 
 
 def load_imagenet(
         version: str = 'tiny',
-        sample_per_label: str = 20) -> Tuple[List[str], List[str], pd.DataFrame]:
+        sample_per_label: str = 20,
+        shuffle: bool = False) -> Tuple[List[str], List[str], pd.DataFrame]:
     """Gating function for loading ImageNet image paths and its paths."""
 
     fpath_rootdirs = './data_dirs.csv'
@@ -38,11 +40,13 @@ def load_imagenet(
     if version == 'tiny':
         df, df_label_id_name = load_tiny_imagenet(
             root_dir=root_dirs['tiny'],
-            sample_per_label=sample_per_label)
+            sample_per_label=sample_per_label,
+            shuffle=shuffle)
     elif version == 'full':
         df, df_label_id_name = load_full_imagenet(
             root_dir=root_dirs['full'],
-            sample_per_label=sample_per_label)
+            sample_per_label=sample_per_label,
+            shuffle=shuffle)
     else:
         raise NotImplementedError(f'ImageNet version {version} is not supported.')
     return df, df_label_id_name
@@ -51,6 +55,7 @@ def load_imagenet(
 def load_full_imagenet(
         root_dir: str,
         sample_per_label: int = 20,
+        shuffle: bool = False,
         labelspace_version: str = 'observed') -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Load the full ImageNet1K image paths and labels."""
 
@@ -78,7 +83,10 @@ def load_full_imagenet(
     df_belt = []
     for img_dir in img_dirs:
         label_id = img_dir.split('/')[-1]
-        img_fpaths = glob.glob(os.path.join(img_dir, '*.JPEG'))[:sample_per_label]
+        img_fpaths = glob.glob(os.path.join(img_dir, '*.JPEG'))
+        img_fpaths = downsample(arr=img_fpaths,
+                                target_size=sample_per_label,
+                                shuffle=shuffle)
         img_ids = [fpath.split('/')[-1].rstrip('.JPEG') for fpath in img_fpaths]
         label_name = df_label_id_name[df_label_id_name['label_id']==label_id]['label_name'].tolist()[0]
         df_part = pd.DataFrame.from_dict(
@@ -101,6 +109,7 @@ def load_full_imagenet(
 def load_tiny_imagenet(
         root_dir: str,
         sample_per_label: int = 20,
+        shuffle: bool = False,
         labelspace_version: str = 'observed') -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Load the Tiny ImageNet image paths and labels."""
 
@@ -114,7 +123,10 @@ def load_tiny_imagenet(
     df_belt = []
     for img_dir in img_dirs:
         label_id = img_dir.split('/')[-2]
-        img_fpaths = glob.glob(os.path.join(img_dir, '*.JPEG'))[:sample_per_label]
+        img_fpaths = glob.glob(os.path.join(img_dir, '*.JPEG'))
+        img_fpaths = downsample(arr=img_fpaths,
+                                target_size=sample_per_label,
+                                shuffle=shuffle)
         img_ids = [fpath.split('/')[-1].rstrip('.JPEG') for fpath in img_fpaths]
         label_name = df_label_id_name[df_label_id_name['label_id']==label_id]['label_name'].tolist()[0]
         df_part = pd.DataFrame.from_dict(
@@ -132,3 +144,16 @@ def load_tiny_imagenet(
             .reset_index()\
             .rename(columns={0:'count'})[['label_id','label_name']]
     return df, df_label_id_name
+
+
+def downsample(arr: List[str],
+               target_size: int,
+               shuffle: bool) -> List[str]:
+    """Simple downsampling function for any list of items."""
+
+    if shuffle is False:
+        return arr[:target_size]
+    else:
+        return np.random.choice(a=arr,
+                                size=np.min([len(arr), target_size]),
+                                replace=False).tolist()
