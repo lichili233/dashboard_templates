@@ -21,6 +21,17 @@ pip install -r requirements.txt
 
 1. Download Tiny ImageNet from [ImageNet official site](https://www.image-net.org/download-images.php)
 
+
+### Prepare text file for specifying data paths
+
+Create a local `data_dirs.csv` file (simply place it next to `ui.py` here) with two columns structured like this:
+
+```
+full,/.../ILSVRC2017_CLS-LOC
+tiny,/.../tiny-imagenet-200
+```
+where `...` needs to be your own local path to where you stored the ImageNet datasets above. The two datasets need not be under the same root directories.
+
 ## Run
 
 ```bash
