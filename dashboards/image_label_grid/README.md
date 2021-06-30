@@ -1,8 +1,10 @@
 # Image-label grid viewer
 
-This template aims to help viewing the images per label in a labeled image dataset (demonsrated here using ImageNet1K and Tiny ImageNet as examples).
+This template aims to help viewing the images per label in a labeled image dataset (demonstrated here using ImageNet1K and Tiny ImageNet as examples).
 
-# Instructions
+![demo](demo.png)
+
+# Execution Instructions
 
 ## Install requirements
 

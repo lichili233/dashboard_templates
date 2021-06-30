@@ -8,6 +8,8 @@ Not from production, not for production.
 
 - Grid viewer for labled images: `dashboards/image_label_grid`
 
+![demo-image-label](dashboards/image_label_grid/demo.png)
+
 # License
 
 [Apache License 2.0](https://github.com/lichili233/dashboard_templates/blob/main/LICENSE)
